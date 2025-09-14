@@ -17,45 +17,130 @@ class MainWindow(QWidget):
         self.resize(1000, 600)
 
         self.setStyleSheet("""
-        QWidget {background-color: #fdf6e3; font-family: Arial; font-size: 11pt;}
-        QLabel {font-weight: bold; font-size: 12pt;}
-        QLineEdit {border: 2px solid #ccc; border-radius: 5px; padding: 6px;}
-        QPushButton {background-color: #2e7d32; color: white; border-radius: 5px; padding: 6px 12px; font-weight: bold;}
-        QPushButton:hover {background-color: #388e3c;}
-        QPushButton#logout {background-color: #c62828;}
-        QPushButton#logout:hover {background-color: #d32f2f;}
-        QTableWidget {background-color: #fff; border: 1px solid #ccc; gridline-color: #ccc;}
-        QHeaderView::section {background-color: #81c784; padding: 4px; border: 1px solid #ccc;}
+        QWidget {
+            background-color: #fdf6e3;
+            font-family: 'Arial';
+            font-size: 11pt;
+            color: #444;
+        }
+        QLabel {
+            font-weight: bold; 
+            font-size: 12pt;
+        }
+        QLineEdit {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            background-color: #fff;
+        }
+        QPushButton {
+            background-color: #2e7d32;
+            color: white;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: bold;
+            font-size: 12pt;
+        }
+        QPushButton:hover {
+            background-color: #388e3c;
+        }
+        QPushButton#logout {
+            background-color: #c62828;
+        }
+        QPushButton#logout:hover {
+            background-color: #d32f2f;
+        }
+        QTableWidget {
+            background-color: #fff; 
+            border: 1px solid #ccc; 
+            gridline-color: #ccc;
+        }
+        QHeaderView::section {
+            background-color: #81c784;
+            padding: 8px;
+            border: 1px solid #ccc;
+            font-weight: bold;
+        }
+        #login_title {
+            font-size: 24pt;
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 20px;
+        }
+        #side_panel {
+            background-color: #2e7d32;
+            color: #ffffff;
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+        }
         """)
 
-        self.layout = QVBoxLayout()
-        self.setLayout(self.layout)
+        # Initialisation d'un layout principal qui sera mis à jour
+        self.main_layout = QVBoxLayout()
+        self.setLayout(self.main_layout)
         self.init_login()
 
     # ---------------- LOGIN ----------------
     def init_login(self):
         self.clear_layout()
-        # Header avec logo
-        header_layout = QHBoxLayout()
-        title = QLabel("Connexion Admin")
-        title.setStyleSheet("font-size:16pt;")
-        logo = QLabel()
-        pixmap = QPixmap("assets/logo.png").scaled(80,80, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        logo.setPixmap(pixmap)
-        header_layout.addWidget(title)
-        header_layout.addStretch()
-        header_layout.addWidget(logo)
-        self.layout.addLayout(header_layout)
+        
+        # Le layout pour organiser les deux colonnes (Panneau de gauche + Panneau de droite)
+        two_column_layout = QHBoxLayout()
+        
+        # Panel de gauche (visuel)
+        left_panel = QWidget()
+        left_panel.setObjectName("side_panel")
+        left_panel.setFixedWidth(400)
+        left_panel_layout = QVBoxLayout()
+        left_panel.setLayout(left_panel_layout)
+        
+        # Ajout du logo dans le panel de gauche
+        logo_label = QLabel()
+        pixmap = QPixmap("assets/logo.png").scaled(150, 150, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        logo_label.setPixmap(pixmap)
+        logo_label.setAlignment(Qt.AlignCenter)
+        
+        title_label = QLabel("Agriconnect")
+        title_label.setStyleSheet("font-size: 24pt; font-weight: bold; color: #000;")
+        title_label.setAlignment(Qt.AlignCenter)
+        
+        left_panel_layout.addStretch()
+        left_panel_layout.addWidget(logo_label)
+        left_panel_layout.addWidget(title_label)
+        left_panel_layout.addStretch()
+        
+        two_column_layout.addWidget(left_panel)
+        
+        # Panel de droite (formulaire de login)
+        right_panel = QWidget()
+        right_panel_layout = QVBoxLayout()
+        right_panel.setLayout(right_panel_layout)
+        
+        form_layout = QVBoxLayout()
+        form_layout.setAlignment(Qt.AlignCenter)
 
-        self.username_input = QLineEdit(); self.username_input.setPlaceholderText("Email")
-        self.password_input = QLineEdit(); self.password_input.setEchoMode(QLineEdit.Password)
+        login_title = QLabel("Connexion Admin")
+        login_title.setObjectName("login_title")
+        login_title.setAlignment(Qt.AlignCenter)
+        
+        self.username_input = QLineEdit()
+        self.username_input.setPlaceholderText("Email")
+        self.password_input = QLineEdit()
         self.password_input.setPlaceholderText("Mot de passe")
+        self.password_input.setEchoMode(QLineEdit.Password)
         self.login_btn = QPushButton("Login")
         self.login_btn.clicked.connect(self.do_login)
 
-        self.layout.addWidget(self.username_input)
-        self.layout.addWidget(self.password_input)
-        self.layout.addWidget(self.login_btn)
+        form_layout.addWidget(login_title)
+        form_layout.addWidget(self.username_input)
+        form_layout.addWidget(self.password_input)
+        form_layout.addWidget(self.login_btn)
+        
+        right_panel_layout.addLayout(form_layout)
+        two_column_layout.addWidget(right_panel)
+        
+        # Ajout du layout à deux colonnes au layout principal
+        self.main_layout.addLayout(two_column_layout)
 
     def do_login(self):
         email = self.username_input.text()
@@ -98,11 +183,11 @@ class MainWindow(QWidget):
         logout_btn.clicked.connect(self.logout)
         header_layout.addWidget(logout_btn)
 
-        self.layout.addLayout(header_layout)
+        self.main_layout.addLayout(header_layout)
 
         # Onglets
         self.tabs = QTabWidget()
-        self.layout.addWidget(self.tabs)
+        self.main_layout.addWidget(self.tabs)
 
         self.tab_create = QWidget()
         self.tab_list = QWidget()
@@ -233,8 +318,29 @@ class MainWindow(QWidget):
 
     # ---------------- UTIL ----------------
     def clear_layout(self):
-        while self.layout.count():
-            child = self.layout.takeAt(0)
+        # Vérifiez que le layout principal a été initialisé
+        if not hasattr(self, 'main_layout') or self.main_layout is None:
+            return
+            
+        while self.main_layout.count():
+            child = self.main_layout.takeAt(0)
             if child.widget():
                 child.widget().deleteLater()
+            elif child.layout():
+                self.clear_layout_recursively(child.layout())
+    
+    def clear_layout_recursively(self, layout):
+        if layout is not None:
+            while layout.count():
+                item = layout.takeAt(0)
+                widget = item.widget()
+                if widget is not None:
+                    widget.deleteLater()
+                else:
+                    self.clear_layout_recursively(item.layout())
 
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec_())
