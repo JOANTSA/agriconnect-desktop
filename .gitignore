@@ -1,0 +1,7 @@
+pycache/
+*.pyc
+venv_client_clourd/
+*.log
+*.o
+*.a
+*.exe
